@@ -3,20 +3,18 @@
 #include <stdexcept>
 #include <string>
 
-
- //----------------基于数组的Stack-------------------//
- 
+//----------------基于数组的Stack-------------------//
 template <typename T>
 class ArrayStack {
 private:
-    T*   _data;
+    T* _data;
     int  _top;
     int  _capacity;
 
     void resize() {
         _capacity *= 2;
         T* newData = new T[_capacity];
-        for (int i = 0; i <= top; ++i) {
+        for (int i = 0; i <= _top; ++i) { 
             newData[i] = _data[i];
         }
         delete[] _data;
@@ -24,34 +22,28 @@ private:
     }
 
 public:
-    ArrayStack(int cap = 16): top(-1), _capacity(cap) {
+    ArrayStack(int cap = 16) : _top(-1), _capacity(cap) { 
         _data = new T[_capacity];
     }
-
     ~ArrayStack() { delete[] _data; }
-
     ArrayStack(const ArrayStack&) = delete;
     ArrayStack& operator=(const ArrayStack&) = delete;
 
     void push(const T& val) {
-        if (top + 1 == _capacity) resize();
-        _data[++top] = val;
+        if (_top + 1 == _capacity) resize();
+        _data[++_top] = val;
     }
-
     void pop() {
         if (empty()) throw std::underflow_error("Stack is empty");
-        --top;
+        --_top;
     }
-
     T& top() {
         if (empty()) throw std::underflow_error("Stack is empty");
-        return _data[top];
+        return _data[_top];
     }
-
-    bool empty() const { return top == -1; }
-    int  size()  const { return top + 1; }
+    bool empty() const { return _top == -1; }
+    int  size()  const { return _top + 1; }
 };
-
 
 //------------------基于数组的 Queue---------------------//
 

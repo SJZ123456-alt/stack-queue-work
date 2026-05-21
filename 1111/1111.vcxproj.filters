@@ -15,7 +15,30 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FileName.cpp">
+    <ClInclude Include="game_engine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stack.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Board.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataStructures.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Solver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Board.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Solver.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
