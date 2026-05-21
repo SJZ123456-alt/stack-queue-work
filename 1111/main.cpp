@@ -1,32 +1,89 @@
-#include "game_engine.h"
-#include <cstdlib>
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include "Board.h"
+#include "Solver.h"
+
+using namespace std;
+
+// 辅助：获取人类输入
+MoveDirection getHumanMove() {
+    char ch;
+    cout << "请输入移动 (w:上, s:下, a:左, d:右, q:退出): ";
+    cin >> ch;
+    switch (ch) {
+    case 'w': return MOVE_UP;
+    case 's': return MOVE_DOWN;
+    case 'a': return MOVE_LEFT;
+    case 'd': return MOVE_RIGHT;
+    case 'q': return MOVE_NONE;
+    default: return MOVE_NONE;
+    }
+}
+
 int main() {
-    system("chcp 65001 > nul");
-    int choice;
-    cout << "数字华容道游戏系统\n";
-    cout << "1. 人类游玩 (3x3)\n";
-    cout << "2. 演示计算机求解动画 (需提供测试路径)\n";
-    cout << "3. 跑性能测试报告 (N=3跑100次)\n";
-    cout << "请选择: ";
-    cin >> choice;
+    // 设置编码，防止控制台乱码
+    // system("chcp 65001 > nul"); // 如果在 Windows VS 下运行需取消注释
 
-    if (choice == 1) {
-        State game;
-        GenerateRandomState(game, 3); // 随机生成，保证有解
-        HumanPlay(game);
-    }
-    else if (choice == 2) {
-        State game;
-        InitBoard(game, 3);
-        // 假设先打乱一下（往上和往左移了几步）
-        Move(game, 'w'); Move(game, 'a'); Move(game, 'a');
+    int n;
+    cout << "=== 数字华容道系统 ===\n";
+    cout << "请输入棋盘大小 (3 或 4): ";
+    cin >> n;
 
-        // 假装这是A同学算出的最优解回退路径
-        string computer_path = "dds";
-        PlayAutoPath(game, computer_path); // B同学的动画调度器
-    }
-    else if (choice == 3) {
-        RunBatchTests(3, 100); // 跑数据给D同学用
+    Board b = Board::randomBoard(n);
+    Solver solver;
+
+    while (true) {
+        cout << "\n当前状态:\n" << b.toString() << endl;
+        cout << "1. 人类操作\n";
+        cout << "2. AI 自动求解\n";
+        cout << "3. 退出\n";
+        cout << "请选择: ";
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            MoveDirection dir = getHumanMove();
+            if (dir == MOVE_NONE) break;
+            if (b.move(dir)) {
+                if (b.isGoal()) {
+                    cout << "恭喜你！完成还原！\n";
+                    break;
+                }
+            }
+            else {
+                cout << "【警告】无效移动！\n";
+            }
+        }
+        else if (choice == 2) {
+            cout << "AI 正在思考中...\n";
+            auto start_time = chrono::high_resolution_clock::now();
+            SolveResult res = solver.solve(b);
+            auto end_time = chrono::high_resolution_clock::now();
+            chrono::duration<double> diff = end_time - start_time;
+
+            if (res.solved) {
+                cout << "求解成功！共 " << res.steps << " 步，耗时 " << diff.count() << " 秒。\n";
+                cout << "路径: ";
+                for (auto m : res.moves) cout << moveToText(m) << " ";
+                cout << "\n是否演示？(y/n): ";
+                char confirm; cin >> confirm;
+                if (confirm == 'y') {
+                    auto stack = Solver::buildMoveStack(res.moves);
+                    while (!stack.empty()) {
+                        b.move(stack.pop());
+                        cout << b.toString() << endl;
+                    }
+                }
+            }
+            else {
+                cout << "失败: " << res.message << endl;
+            }
+        }
+        else {
+            break;
+        }
     }
 
     return 0;

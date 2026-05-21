@@ -15,25 +15,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Board.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DataStructures.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Solver.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\Board.cpp">
+    <ClCompile Include="Board.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\Solver.cpp">
+    <ClCompile Include="Solver.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Board.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructures.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Solver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
