@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <windows.h>
 #include <chrono>
 #include "Board.h"
 #include "Solver.h"
@@ -22,9 +23,9 @@ MoveDirection getHumanMove() {
 }
 
 int main() {
+    SetConsoleOutputCP(65001);
     // 设置编码，防止控制台乱码
-    // system("chcp 65001 > nul"); // 如果在 Windows VS 下运行需取消注释
-
+    system("chcp 65001 > nul"); 
     int n;
     cout << "=== 数字华容道系统 ===\n";
     cout << "请输入棋盘大小 (3 或 4): ";
@@ -69,12 +70,18 @@ int main() {
                 for (auto m : res.moves) cout << moveToText(m) << " ";
                 cout << "\n是否演示？(y/n): ";
                 char confirm; cin >> confirm;
+                // 在 main.cpp 中，演示部分修改为：
                 if (confirm == 'y') {
                     auto stack = Solver::buildMoveStack(res.moves);
                     while (!stack.empty()) {
-                        b.move(stack.pop());
-                        cout << b.toString() << endl;
+                        MoveDirection dir = stack.pop();
+                        b.move(dir);
+                        system("cls"); // 清屏，让画面看起来是在“动”
+                        cout << "演示中: " << moveToText(dir) << "\n" << b.toString() << endl;
+                        // 加入延时，让动画慢一点
+                        Sleep(500); // 500毫秒延迟
                     }
+                    cout << "演示完毕！\n";
                 }
             }
             else {
