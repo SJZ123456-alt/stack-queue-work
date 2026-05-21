@@ -23,7 +23,6 @@ MoveDirection getHumanMove() {
 }
 
 int main() {
-    SetConsoleOutputCP(65001);
     // 设置编码，防止控制台乱码
     system("chcp 65001 > nul"); 
     int n;
