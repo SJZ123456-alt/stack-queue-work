@@ -131,7 +131,6 @@
     <ClInclude Include="..\DataStructures.h" />
     <ClInclude Include="..\Solver.h" />
     <ClInclude Include="game_engine.h" />
-    <ClInclude Include="stack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Board.cpp" />

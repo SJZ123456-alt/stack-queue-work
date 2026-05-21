@@ -18,9 +18,6 @@
     <ClInclude Include="game_engine.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="stack.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\Board.h">
       <Filter>头文件</Filter>
     </ClInclude>
