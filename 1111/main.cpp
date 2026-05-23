@@ -24,7 +24,7 @@ MoveDirection getHumanMove() {
 
 int main() {
     // 设置编码，防止控制台乱码
-    system("chcp 65001 > nul"); 
+    system("chcp 65001 > nul");
     int n;
     cout << "=== 数字华容道系统 ===\n";
     cout << "请输入棋盘大小 (3 或 4): ";
@@ -44,16 +44,77 @@ int main() {
         cin >> choice;
 
         if (choice == 1) {
-            MoveDirection dir = getHumanMove();
-            if (dir == MOVE_NONE) break;
-            if (b.move(dir)) {
-                if (b.isGoal()) {
-                    cout << "恭喜你！完成还原！\n";
-                    break;
+            // 【修改点】：进入人类专属的游戏交互循环，并声明两个自定义顺序栈
+            SeqStack<MoveDirection> undoStack;
+            SeqStack<MoveDirection> redoStack;
+
+            while (true) {
+                system("cls"); // 刷新屏幕，展示清晰的操作提示
+                cout << "=== 人类操作模式 ===\n";
+                cout << b.toString() << endl;
+                cout << "【操作指南】\n";
+                cout << "  w: 上 | s: 下 | a: 左 | d: 右\n";
+                cout << "  u: 悔步 (Undo) | r: 撤销悔步 (Redo)\n";
+                cout << "  q: 返回主菜单\n\n";
+                cout << "请输入操作: ";
+
+                char ch;
+                cin >> ch;
+
+                if (ch == 'q') {
+                    break; // 退出当前模式，返回主菜单
                 }
-            }
-            else {
-                cout << "【警告】无效移动！\n";
+                else if (ch == 'u') {
+                    // 悔步逻辑：弹出历史步骤，做反方向移动，并压入 redo 栈
+                    if (!undoStack.empty()) {
+                        MoveDirection lastMove = undoStack.pop();
+                        b.move(oppositeMove(lastMove));
+                        redoStack.push(lastMove);
+                    }
+                    else {
+                        cout << "【提示】已处于初始状态，无法再悔步！\n";
+                        Sleep(800);
+                    }
+                }
+                else if (ch == 'r') {
+                    // 撤销悔步逻辑：弹出重做步骤，做正方向移动，并重新压回 undo 栈
+                    if (!redoStack.empty()) {
+                        MoveDirection nextMove = redoStack.pop();
+                        b.move(nextMove);
+                        undoStack.push(nextMove);
+                    }
+                    else {
+                        cout << "【提示】没有可以撤销悔步的记录！\n";
+                        Sleep(800);
+                    }
+                }
+                else {
+                    // 普通移动方向转换
+                    MoveDirection dir = MOVE_NONE;
+                    if (ch == 'w') dir = MOVE_UP;
+                    else if (ch == 's') dir = MOVE_DOWN;
+                    else if (ch == 'a') dir = MOVE_LEFT;
+                    else if (ch == 'd') dir = MOVE_RIGHT;
+
+                    if (dir != MOVE_NONE) {
+                        if (b.move(dir)) {
+                            undoStack.push(dir); // 正常移动，压入悔步栈
+                            redoStack.clear();   // 每次进行新移动，清空重做栈
+
+                            if (b.isGoal()) {
+                                system("cls");
+                                cout << b.toString() << endl;
+                                cout << "恭喜你！完成还原！\n";
+                                Sleep(1500);
+                                break;
+                            }
+                        }
+                        else {
+                            cout << "【警告】无效移动！\n";
+                            Sleep(600);
+                        }
+                    }
+                }
             }
         }
         else if (choice == 2) {

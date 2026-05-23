@@ -26,7 +26,7 @@ class Solver {
 private:
     int idaLimit;                         // IDA* 搜索允许的最大深度。
     long long expanded;                   // IDA* 搜索过程中扩展的节点计数。
-    std::vector<MoveDirection> idaPath;   // IDA* 当前递归路径。
+    SeqStack<MoveDirection> idaPath;      // IDA* 当前递归路径。
 
     // IDA* 的递归深度优先搜索部分。
     // board 会在搜索中临时改变，每个分支结束后再恢复。
