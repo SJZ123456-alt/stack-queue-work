@@ -1,0 +1,48 @@
+#pragma once
+#include <string>
+#include "Structure.h" // 引入你的手写数据结构
+
+enum MoveDirection {
+    MOVE_UP = 0,
+    MOVE_DOWN = 1,
+    MOVE_LEFT = 2,
+    MOVE_RIGHT = 3,
+    MOVE_NONE = 4
+};
+
+std::string moveToText(MoveDirection dir);
+MoveDirection oppositeMove(MoveDirection dir);
+
+class Board {
+private:
+    int n;
+    SeqList<int> cells; // 【核心修改】换成咱们手写的顺序表
+
+public:
+    Board(int size = 3);
+    Board(int size, const SeqList<int>& values);
+
+    int size() const;
+    int total() const;
+    const SeqList<int>& values() const;
+
+    int at(int row, int col) const;
+    int blankIndex() const;
+    int blankRow() const;
+    int blankCol() const;
+
+    bool canMove(MoveDirection dir) const;
+    bool move(MoveDirection dir);
+    Board moved(MoveDirection dir) const;
+
+    SeqList<MoveDirection> legalMoves() const; // 返回值改为 SeqList
+
+    bool isGoal() const;
+    bool isSolvable() const; // 逆序数判断是否有解
+    int manhattan() const;
+    std::string encode() const;
+
+    static Board goal(int size);
+    // 纯随机生成：打乱前 N*N-1 个数字，空格固定在右下角
+    static Board randomBoard(int size);
+};
