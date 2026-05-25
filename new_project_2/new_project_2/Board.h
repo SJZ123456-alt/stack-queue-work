@@ -10,7 +10,7 @@ enum MoveDirection {
     MOVE_NONE = 4
 };
 
-MoveDirection oppositeMove(MoveDirection dir);
+MoveDirection oppositeMove(MoveDirection dir);//获取相反方向，方便IDA*搜索时剪枝
 
 class Board {
 private:
