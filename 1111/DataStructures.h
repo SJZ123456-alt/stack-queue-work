@@ -1,92 +1,90 @@
 ﻿#pragma once
-
 #include <stdexcept>
 #include <utility>
 #include <vector>
 
-// 顺序栈：基于动态数组实现的栈结构
-// 核心用途：保存和回放路径求解过程中的节点/状态，支持后进先出访问
-// T：栈中存储的元素类型（泛型）
-
-//注：因为华容道3乘3或者4乘4最多只要几十步，所以几乎不需要扩容，而且顺序栈比链栈访问快，便于画图。
-
 template <class T>
 class SeqStack {
 private:
-    T* data;        // 动态数组指针，用于实际存储栈内元素
-    int capacity;   // 动态数组当前最大容量，满时自动扩容
-    int topIndex;   // 栈顶元素下标，初始为-1表示空栈，指向最后一个有效元素
+    T* data;
+    int capacity;   // 当前最大容量，满时自动扩容
+    int topIndex;
 
-    // 栈扩容函数：当元素数量达到容量上限时自动扩容
-    // 扩容策略：容量直接翻倍，保证均摊时间复杂度O(1)
-    void expand() {
+    void expand() 
+    {
         int newCapacity = capacity * 2;     // 新容量设置为原容量的2倍
-        T* newData = new T[newCapacity];    // 申请新的更大的动态数组
-        // 将原数组所有元素逐个拷贝到新数组中
-        for (int i = 0; i <= topIndex; ++i) {
+        T* newData = new T[newCapacity];
+        for (int i = 0; i <= topIndex; ++i) 
+        {
             newData[i] = data[i];
         }
-        delete[] data;                      // 释放原数组内存，避免内存泄漏
-        data = newData;                     // 指向新数组
-        capacity = newCapacity;            // 更新容量
+
+        delete[] data;
+        data = newData;
+        capacity = newCapacity;
     }
 
 public:
-    // 构造函数：初始化栈
-    // initCapacity：栈初始容量，默认64，若传入非法值则自动修正为64
-    explicit SeqStack(int initCapacity = 64)
-        : capacity(initCapacity), topIndex(-1) {
-        if (capacity <= 0) capacity = 64;   // 保证容量合法，最小为64
-        data = new T[capacity];             // 分配初始动态数组
+    // 栈初始容量，默认64
+    SeqStack(int initCapacity = 64): capacity(initCapacity), topIndex(-1) 
+    {
+        if (capacity <= 0) capacity = 64;
+        {
+            data = new T[capacity];
+        }
     }
 
-    // 拷贝构造函数：深拷贝另一个栈的所有元素
-    // 避免浅拷贝导致的指针重复释放问题
-    SeqStack(const SeqStack& other)
-        : capacity(other.capacity), topIndex(other.topIndex) {
+    SeqStack(const SeqStack& other): capacity(other.capacity), topIndex(other.topIndex) 
+    {
         data = new T[capacity];  
-        for (int i = 0; i <= topIndex; ++i) data[i] = other.data[i];
+        for (int i = 0; i <= topIndex; ++i)
+        {
+            data[i] = other.data[i];
+        }
     }
 
     //这个是因为拷贝构造没法被成员函数直接调用，所以重载重新写一遍
-    // 赋值运算符重载：深拷贝赋值，支持栈之间的赋值操作
-    SeqStack& operator=(const SeqStack& other) {
+    SeqStack& operator=(const SeqStack& other) 
+    {
         if (this == &other) return *this;   // 自赋值判断，防止错误操作
-        delete[] data;                      // 释放当前对象原有内存
+        delete[] data;
         capacity = other.capacity;
         topIndex = other.topIndex;
-        data = new T[capacity];             // 重新分配内存并拷贝
-        for (int i = 0; i <= topIndex; ++i) data[i] = other.data[i];
+        data = new T[capacity];
+        for (int i = 0; i <= topIndex; ++i)
+        {
+            data[i] = other.data[i];
+        }
         return *this;
     }
 
-    // 析构函数：释放动态数组内存
-    ~SeqStack() {
+    // 析构函数
+    ~SeqStack() 
+    {
         delete[] data;
     }
 
-    // 入栈操作：将元素压入栈顶
-    // 先判断是否需要扩容，再更新栈顶并赋值
-    void push(const T& value) {
+    // 入栈
+    void push(const T& value) 
+    {
         if (topIndex + 1 >= capacity) expand(); // 栈满则扩容
-        data[++topIndex] = value;               // 栈顶上移，存入新元素
+        data[++topIndex] = value;
     }
 
-    // 出栈操作：删除并返回栈顶元素
-    // 这里空栈时使用关键字throw,可以立即终止函数
+    // 出栈
     T pop() {
         if (empty()) throw std::runtime_error("Stack is empty");
         // 返回当前栈顶元素，然后将 topIndex 下移一位
         return data[topIndex--];
     }
 
-    // 获取栈顶元素的引用（非const版本，可修改）
+    // 获取栈顶,可修改
     T& top() {
         if (empty()) throw std::runtime_error("Stack is empty");
         return data[topIndex];
     }
 
-    // const重载版本
+	// 获取栈顶,不可修改
     const T& top() const {
         if (empty()) throw std::runtime_error("Stack is empty");
         return data[topIndex];
@@ -97,12 +95,12 @@ public:
         return topIndex < 0;
     }
 
-    // 获取栈中当前元素个数
+    // 获取栈中元素个数
     int size() const {
         return topIndex + 1;
     }
 
-    // 清空栈：仅重置栈顶指针，不释放内存，高效复用
+    // 清空栈
     void clear() {
         topIndex = -1;
     }
