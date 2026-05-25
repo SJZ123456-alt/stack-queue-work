@@ -2,11 +2,13 @@
 #include <unordered_map>
 #include <algorithm>
 
-Solver::Solver() : idaLimit(80) {}
+Solver::Solver() : idaLimit(80) {}//因为4*4最大数为80
 
 SolveResult Solver::solve(const Board& start) {
     if (!start.isSolvable()) {
-        SolveResult res; res.solvable = false; return res;
+        SolveResult res;
+        res.solvable = false;
+        return res;
     }
     if (start.size() == 3) return solveByBfs(start);
     return solveByIdaStar(start);
@@ -15,11 +17,15 @@ SolveResult Solver::solve(const Board& start) {
 SolveResult Solver::solveByBfs(const Board& start) {
     SolveResult result;
     result.solvable = true;
-    if (start.isGoal()) { result.solved = true; return result; }
+    if (start.isGoal()) 
+    { 
+        result.solved = true;
+        return result;
+    }
 
     struct PrevInfo {
-        std::string parent;
-        MoveDirection move;
+		std::string parent;//上一个状态的编码
+		MoveDirection move;//从上一个状态到当前状态的移动方向
     };
 
     CirQueue<Board> queue(100000);
@@ -41,11 +47,11 @@ SolveResult Solver::solveByBfs(const Board& start) {
             Board next = current.moved(dir);
             std::string nextCode = next.encode();
 
-            if (visited.find(nextCode) != visited.end()) continue;
+            if (visited.find(nextCode) != visited.end()) continue;//剪枝
 
             visited[nextCode] = { currentCode, dir };
-            if (nextCode == goalCode) {
-                // 回溯路径
+            if (nextCode == goalCode) // 回溯路径
+            {
                 SeqStack<MoveDirection> reverseStack;
                 std::string p = nextCode;
                 while (visited[p].move != MOVE_NONE) {

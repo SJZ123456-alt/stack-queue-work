@@ -4,16 +4,16 @@
 #include <string>
 
 struct SolveResult {
-    bool solvable;
-    bool solved;
-    int steps;
-    SeqList<MoveDirection> moves;
+    bool solvable;  //有没有解
+	bool solved;    //计算机是否成功找到
+    int steps;      //最少步数
+    SeqList<MoveDirection> moves;//具体的步骤
     SolveResult() : solvable(false), solved(false), steps(0) {}
 };
 
 class Solver {
 private:
-    int idaLimit;
+    int idaLimit; //最大搜索深度限制
     SeqStack<MoveDirection> idaPath;
 
     int idaSearch(Board& board, int g, int bound, MoveDirection previous);
