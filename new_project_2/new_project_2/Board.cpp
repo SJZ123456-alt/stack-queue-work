@@ -4,16 +4,6 @@
 #include <cmath>
 #include <sstream>
 
-std::string moveToText(MoveDirection dir) {
-    switch (dir) {
-    case MOVE_UP: return "ио";
-    case MOVE_DOWN: return "об";
-    case MOVE_LEFT: return "вС";
-    case MOVE_RIGHT: return "ср";
-    default: return "нч";
-    }
-}
-
 MoveDirection oppositeMove(MoveDirection dir) {
     switch (dir) {
     case MOVE_UP: return MOVE_DOWN;

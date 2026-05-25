@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Structure.h" // 引入你的手写数据结构
+#include "Structure.h"
 
 enum MoveDirection {
     MOVE_UP = 0,
@@ -10,13 +10,12 @@ enum MoveDirection {
     MOVE_NONE = 4
 };
 
-std::string moveToText(MoveDirection dir);
 MoveDirection oppositeMove(MoveDirection dir);
 
 class Board {
 private:
     int n;
-    SeqList<int> cells; // 【核心修改】换成咱们手写的顺序表
+    SeqList<int> cells;
 
 public:
     Board(int size = 3);
