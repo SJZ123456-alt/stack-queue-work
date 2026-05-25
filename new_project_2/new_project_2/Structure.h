@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdexcept>
-#include <utility>
 #include <vector>
 
 template <class T>
@@ -79,14 +78,8 @@ public:
         return data[topIndex--];
     }
 
-    // 获取栈顶,可修改
+    // 获取栈顶
     T& top() {
-        if (empty()) throw std::runtime_error("Stack is empty");
-        return data[topIndex];
-    }
-
-    // 获取栈顶,不可修改
-    const T& top() const {
         if (empty()) throw std::runtime_error("Stack is empty");
         return data[topIndex];
     }
