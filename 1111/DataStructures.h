@@ -185,3 +185,93 @@ public:
     }
 };
 
+
+template <class T>
+class SeqList {
+private:
+    T* data;
+    int capacity;
+    int length;
+
+	void expand()//依然是*2扩容
+    {
+        int newCapacity = capacity * 2;
+        T* newData = new T[newCapacity];
+        for (int i = 0; i < length; ++i) 
+        {
+            newData[i] = data[i];
+        }
+        delete[] data;
+        data = newData;
+        capacity = newCapacity;
+    }
+
+public:
+    SeqList(int initCapacity = 16) : capacity(initCapacity), length(0) 
+    {
+        data = new T[capacity];
+    }
+
+    // 拷贝构造函数
+    SeqList(const SeqList& other) : capacity(other.capacity), length(other.length) 
+    {
+        data = new T[capacity];
+        for (int i = 0; i < length; ++i) 
+        {
+            data[i] = other.data[i];
+        }
+    }
+
+    // 等于重载
+    SeqList& operator=(const SeqList& other) 
+    {
+        if (this == &other) return *this;
+        delete[] data;
+        capacity = other.capacity;
+        length = other.length;
+        data = new T[capacity];
+        for (int i = 0; i < length; ++i) 
+        {
+            data[i] = other.data[i];
+        }
+        return *this;
+    }
+
+    //析构
+    ~SeqList() 
+    {
+        delete[] data;
+    }
+
+    //增加元素
+    void push_back(const T& value) 
+    {
+        if (length >= capacity) expand();
+        data[length++] = value;
+    }
+
+    //删除元素
+    void pop_back() 
+    {
+        if (length > 0) length--;
+    }
+
+
+    T& operator[](int index) 
+    {
+        return data[index];
+    }
+    const T& operator[](int index) const 
+    {
+        return data[index];
+    }
+
+    int size() const
+    {
+        return length;
+    }
+    void clear()
+    {
+        length = 0;
+    }
+};

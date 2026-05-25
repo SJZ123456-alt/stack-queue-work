@@ -2,11 +2,10 @@
 
 #include "Board.h"
 #include "DataStructures.h"
-
 #include <string>
 #include <vector>
 
-// SolveResult 保存计算机玩家求解后的全部结果。
+//保存计算机玩家求解后的全部结果。
 struct SolveResult {
     bool solvable;                    // 初始棋盘在数学上是否有解。
     bool solved;                      // 求解器是否已经找到完整路径。
