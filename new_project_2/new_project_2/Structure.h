@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdexcept>
-#include <vector>
 
 template <class T>
 class SeqStack {
