@@ -276,4 +276,3 @@ public:
         length = 0;
     }
 };
-#pragma once
