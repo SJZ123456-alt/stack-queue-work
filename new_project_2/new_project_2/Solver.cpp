@@ -138,18 +138,18 @@ int Solver::idaSearch(Board& board, int g, int bound, MoveDirection previous, in
 }*/
 
 SolveResult Solver::solveFast(const Board& start) {
-    if (start.size() == 3) return solveByBfs(start); // 3x3 极其简单，直接给最优解就行
+    if (start.size() == 3) return solveByBfs(start); // 3x3 直接给最优解
 
     SolveResult result;
     result.solvable = true; result.solved = false;
 
     Board board = start;
-    int bound = board.manhattan() * 4; // 初始阈值也要带上权重
+    int bound = board.manhattan() * 4;
     idaPath.clear();
     nodeCount = 0;
     startTime = clock();
 
-    // 贪婪算法的步数可能会走到 100 多步，所以这里的限制放宽到 9999
+    //限制放宽到 9999
     while (bound <= 9999) {
         int value = idaSearch(board, 0, bound, MOVE_NONE, 4); // 传入权重 4
         if (value == -2) return result; // 超时退出
@@ -167,7 +167,7 @@ SolveResult Solver::solveFast(const Board& start) {
     return result;
 }
 
-// 【核心修改 3】：实现极限最优解（权重 = 1）
+//实现最优解
 SolveResult Solver::solveOptimal(const Board& start) {
     if (start.size() == 3) return solveByBfs(start);
 
@@ -182,7 +182,7 @@ SolveResult Solver::solveOptimal(const Board& start) {
 
     while (bound <= idaLimit) {
         int value = idaSearch(board, 0, bound, MOVE_NONE, 1); // 传入权重 1，纯正血统
-        if (value == -2) return result; // 触发 2 秒超时
+        if (value == -2) return result; // 触发超时
         if (value == -1) {
             SeqStack<MoveDirection> tempPath = idaPath;
             SeqStack<MoveDirection> reverseStack;
