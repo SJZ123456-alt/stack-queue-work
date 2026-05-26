@@ -124,7 +124,42 @@ int Board::manhattan() const
         int goalRow = (value - 1) / n, goalCol = (value - 1) % n;
         sum += abs(currentRow - goalRow) + abs(currentCol - goalCol);
     }
-    return sum;
+
+    //线性冲突
+    int conflict = 0;
+    // 检查每一行的冲突
+    for (int row = 0; row < n; ++row) {
+        for (int c1 = 0; c1 < n - 1; ++c1) {
+            int val1 = at(row, c1);
+            if (val1 == 0 || (val1 - 1) / n != row) continue;
+
+            for (int c2 = c1 + 1; c2 < n; ++c2) {
+                int val2 = at(row, c2);
+                if (val2 == 0 || (val2 - 1) / n != row) continue;
+
+                // 如果同一行里左边的数字大于右边的数字，就加 2 步惩罚
+                if (val1 > val2) conflict += 2;
+            }
+        }
+    }
+
+    // 检查每一列
+    for (int col = 0; col < n; ++col) {
+        for (int r1 = 0; r1 < n - 1; ++r1) {
+            int val1 = at(r1, col);
+            if (val1 == 0 || (val1 - 1) % n != col) continue;
+
+            for (int r2 = r1 + 1; r2 < n; ++r2) {
+                int val2 = at(r2, col);
+                if (val2 == 0 || (val2 - 1) % n != col) continue;
+
+                // 同一列里上面的数字大于下面的数字，加 2 步惩罚
+                if (val1 > val2) conflict += 2;
+            }
+        }
+    }
+    return sum + conflict;
+    //return sum;
 }
 
 std::string Board::encode() const // 转成字符串，方便哈希表存取
