@@ -27,7 +27,7 @@ void initNewGame(int n);
 void drawUI();
 void handleMouseClick(int mx, int my);
 void tryHumanMove(int row, int col);
-void showSolution();
+void showSolution(bool isFast);
 void checkSolvable();
 void processVictory();
 
@@ -83,15 +83,34 @@ void processVictory()
     drawUI();
     FlushBatchDraw();
 
+    settextcolor(RGB(100, 100, 100));
+    outtextxy(BTN_X, 390, _T("正在进行最终结算..."));
+    FlushBatchDraw();
     SolveResult res = solver.solve(initialBoard);
 
     TCHAR msg[256];
-    if (res.solved && humanSteps == res.steps) {
-        _stprintf_s(msg, _T("太强了！你用了 %d 步完成！\n这是理论最少步数ヾ(*´∀ ˋ*)ﾉ"), humanSteps);
+    if (res.solved)
+    {
+        // 在 2 秒内算出来了
+        if (humanSteps == res.steps)
+        {
+            // 人类步数 == 最少步数
+            _stprintf_s(msg, _T("太强了！你只用了 %d 步就完成了！\n这就是这局理论上的最少步数！ヾ(*´∀ ˋ*)ﾉ"), humanSteps);
+        }
+        else
+        {
+            //人类步数 > 最少步数
+            _stprintf_s(msg, _T("恭喜通关！你用了 %d 步。\n提示：算出这局的理论最少步数是 %d 步。\n要不要点重新开始挑战一下最短路线？(ง๑•_•)ง"), humanSteps, res.steps);
+        }
     }
-    else {
-        _stprintf_s(msg, _T("恭喜通关！你用了 %d 步。\n理论最少步数为 %d 步，要不要再挑战一下自己(ง๑•_•)ง"), humanSteps, res.solved ? res.steps : 0);
+    else
+    {
+        //超时没算出来
+        _stprintf_s(msg, _T("恭喜通关！你用了 %d 步！\n这局开局极度复杂，连计算机在限时内都算不出极限最少步数。\n你能靠自己解开简直太厉害了！(๑•̀ㅂ•́)و✧"), humanSteps);
     }
+
+    drawUI();
+    FlushBatchDraw();
     MessageBox(GetHWnd(), msg, _T("胜利！"), MB_OK);
 }
 
@@ -137,10 +156,10 @@ void handleMouseClick(int mx, int my) {
                 checkSolvable();
             }
             // 查看最少步数解
-            if (my >= 260 && my <= 260 + BTN_HEIGHT) 
-            {
-                showSolution();
-            }
+            if (my >= 260 && my <= 260 + BTN_HEIGHT) showSolution(true); // 传入 true
+
+            // 极限最优解
+            if (my >= 320 && my <= 320 + BTN_HEIGHT) showSolution(false); // 传入 false
         }
     }
 }
@@ -172,20 +191,25 @@ void checkSolvable() {
     }
 }
 
-void showSolution() {
+void showSolution(bool isFast) {
     if (!currentBoard.isSolvable()) {
         MessageBox(GetHWnd(), _T("此局无解，点击【新的一局】重新开始叭ㅍ_ㅍ"), _T("提示"), MB_OK);
         return;
     }
 
-    outtextxy(BTN_X, 330, _T("正在计算最少步数..."));
+    outtextxy(BTN_X, 390, _T("正在计算最少步数..."));
     FlushBatchDraw();
 
-    SolveResult res = solver.solve(currentBoard);
+    SolveResult res = isFast ? solver.solveFast(currentBoard) : solver.solveOptimal(currentBoard);
+
     if (res.solved) {
+        state = PLAYING;
+        drawUI();
+        FlushBatchDraw();
+
         TCHAR msg[128];
-        _stprintf_s(msg, _T("最少还需要 %d 步\n点击确认开始演示"), res.steps);
-        MessageBox(GetHWnd(), msg, _T("提示"), MB_OK);
+        _stprintf_s(msg, _T("共需要 %d 步\n点击确认开始演示"), res.steps);
+        MessageBox(GetHWnd(), msg, isFast ? _T("快速求解完成") : _T("最优解计算完成"), MB_OK);
 
         state = DEMOING;
         for (int i = 0; i < res.moves.size(); ++i) {
@@ -196,6 +220,13 @@ void showSolution() {
         }
         state = GAME_OVER;
         MessageBox(GetHWnd(), _T("演示结束"), _T("提示"), MB_OK);
+    }
+    else 
+    {
+        state = PLAYING;
+        drawUI();
+        FlushBatchDraw();
+        MessageBox(GetHWnd(), _T("再算电脑就卡死了\n要不换个相对简单的再试吧"), _T("计算超时"), MB_OK | MB_ICONINFORMATION);
     }
 }
 
@@ -279,7 +310,7 @@ void drawUI() {
     fillroundrect(BTN_X, 200, BTN_X + BTN_WIDTH, 200 + BTN_HEIGHT, 5, 5);
     outtextxy(BTN_X + 20, 213, _T("检查是否有解"));
 
-    // 查看最少步数解
+    // 快速求解
     if (state == PLAYING)
     {
         setfillcolor(RGB(200, 200, 200));
@@ -289,12 +320,24 @@ void drawUI() {
         setfillcolor(RGB(100, 100, 100));
     }
     fillroundrect(BTN_X, 260, BTN_X + BTN_WIDTH, 260 + BTN_HEIGHT, 5, 5);
-    outtextxy(BTN_X + 10, 273, _T("查看最少步数解"));
+    outtextxy(BTN_X + 25, 273, _T("快速求解"));
+
+    // 最优解
+    if (state == PLAYING)
+    {
+        setfillcolor(RGB(200, 200, 200));
+    }
+    else
+    {
+        setfillcolor(RGB(100, 100, 100));
+    }
+    fillroundrect(BTN_X, 320, BTN_X + BTN_WIDTH, 320 + BTN_HEIGHT, 5, 5);
+    outtextxy(BTN_X + 20, 333, _T("求最优解"));
 
     // 状态提示文字
     if (state == GAME_OVER) 
     {
         settextcolor(RGB(200, 50, 50));
-        outtextxy(BTN_X, 330, _T("游戏结束"));
+        outtextxy(BTN_X, 390, _T("游戏结束"));
     }
 }
