@@ -1,4 +1,4 @@
-#include <graphics.h>
+ï»¿#include <graphics.h>
 #include <conio.h>
 #include <stdio.h>
 #include <time.h>
@@ -6,7 +6,7 @@
 #include "Solver.h"
 #include "Structure.h"
 
-// ÓÎÏ·×´Ì¬Ã¶¾Ù
+// æ¸¸æˆçŠ¶æ€æžšä¸¾
 enum GameState { PLAYING, GAME_OVER, DEMOING };
 
 const int START_X = 50;
@@ -18,7 +18,7 @@ const int BTN_HEIGHT = 45;
 
 int currentN = 3;
 Board currentBoard;
-Board initialBoard; // ¼ÇÂ¼¿ª¾Ö×´Ì¬£¬ÏÖÔÚÕýºÃÅÉÉÏÓÃ³¡£¡
+Board initialBoard; // è®°å½•å¼€å±€çŠ¶æ€
 Solver solver;
 GameState state = PLAYING;
 int humanSteps = 0;
@@ -31,7 +31,8 @@ void showSolution();
 void checkSolvable();
 void processVictory();
 
-int main() {
+int main()
+{
     srand((unsigned)time(NULL));
     initgraph(620, 480);
     setbkcolor(RGB(240, 235, 225));
@@ -40,19 +41,22 @@ int main() {
     initNewGame(currentN);
     BeginBatchDraw();
 
-    while (true) {
+    while (true)
+    {
         drawUI();
         FlushBatchDraw();
 
-        // Ö»ÓÐÔÚ PLAYING ×´Ì¬²ÅÈ¥¼ì²âÊ¤Àû
-        if (state == PLAYING && currentBoard.isGoal()) {
+        //PLAYING çŠ¶æ€æ‰åŽ»æ£€æµ‹èƒœåˆ©
+        if (state == PLAYING && currentBoard.isGoal())
+        {
             processVictory();
         }
 
-        // °Ñ»ýÑ¹µÄÊó±êÏûÏ¢Ò»´ÎÐÔ´¦ÀíÍê£¬¸æ±ð¿¨¶Ù£¡
-        while (MouseHit()) {
+        while (MouseHit())
+        {
             MOUSEMSG msg = GetMouseMsg();
-            if (msg.uMsg == WM_LBUTTONDOWN) {
+            if (msg.uMsg == WM_LBUTTONDOWN)
+            {
                 handleMouseClick(msg.x, msg.y);
             }
         }
@@ -63,7 +67,8 @@ int main() {
     return 0;
 }
 
-void initNewGame(int n) {
+void initNewGame(int n)
+{
     currentN = n;
     TILE_SIZE = (currentN == 3) ? 110 : 85;
     currentBoard = Board::randomBoard(currentN);
@@ -72,7 +77,8 @@ void initNewGame(int n) {
     state = PLAYING;
 }
 
-void processVictory() {
+void processVictory()
+{
     state = GAME_OVER;
     drawUI();
     FlushBatchDraw();
@@ -81,22 +87,22 @@ void processVictory() {
 
     TCHAR msg[256];
     if (res.solved && humanSteps == res.steps) {
-        _stprintf_s(msg, _T("Ì«Ç¿ÁË£¡ÄãÓÃÁË %d ²½Íê³É£¡\nÕâÊÇÀíÂÛ×îÉÙ²½Êý£¬Äã¾ÍÊÇ»ªÈÝµÀÖ®Éñ£¡"), humanSteps);
+        _stprintf_s(msg, _T("å¤ªå¼ºäº†ï¼ä½ ç”¨äº† %d æ­¥å®Œæˆï¼\nè¿™æ˜¯ç†è®ºæœ€å°‘æ­¥æ•°ãƒ¾(*Â´âˆ€ Ë‹*)ï¾‰"), humanSteps);
     }
     else {
-        _stprintf_s(msg, _T("¹§Ï²Í¨¹Ø£¡ÄãÓÃÁË %d ²½¡£\n£¨ÌáÊ¾£ºÀíÂÛ×îÉÙ²½ÊýÎª %d ²½£©"), humanSteps, res.solved ? res.steps : 0);
+        _stprintf_s(msg, _T("æ­å–œé€šå…³ï¼ä½ ç”¨äº† %d æ­¥ã€‚\nç†è®ºæœ€å°‘æ­¥æ•°ä¸º %d æ­¥ï¼Œè¦ä¸è¦å†æŒ‘æˆ˜ä¸€ä¸‹è‡ªå·±(à¸‡à¹‘â€¢_â€¢)à¸‡"), humanSteps, res.solved ? res.steps : 0);
     }
-    MessageBox(GetHWnd(), msg, _T("Ê¤Àû£¡"), MB_OK);
+    MessageBox(GetHWnd(), msg, _T("èƒœåˆ©ï¼"), MB_OK);
 }
 
 void handleMouseClick(int mx, int my) {
-    // ¶¥²¿¹æ¸ñÇÐ»»
+    // è§„æ ¼åˆ‡æ¢
     if (my >= 20 && my <= 55) {
         if (mx >= 50 && mx <= 130) initNewGame(3);
         if (mx >= 150 && mx <= 230) initNewGame(4);
     }
 
-    // ÆåÅÌµã»÷ (½öÔÚÍæË£×´Ì¬ÏìÓ¦)
+    // æ£‹ç›˜ç‚¹å‡»
     if (state == PLAYING) {
         if (mx >= START_X && mx < START_X + currentN * TILE_SIZE &&
             my >= START_Y && my < START_Y + currentN * TILE_SIZE) {
@@ -106,29 +112,33 @@ void handleMouseClick(int mx, int my) {
         }
     }
 
-    // ÓÒ²à°´Å¥½»»¥
-    if (mx >= BTN_X && mx <= BTN_X + BTN_WIDTH) {
+    // å³ä¾§æŒ‰é’®äº¤äº’
+    if (mx >= BTN_X && mx <= BTN_X + BTN_WIDTH) 
+    {
 
-        // 1. ÐÂµÄÒ»¾Ö (´òÂÒÖØÀ´)
-        if (my >= 80 && my <= 80 + BTN_HEIGHT) {
+        //æ–°çš„ä¸€å±€
+        if (my >= 80 && my <= 80 + BTN_HEIGHT) 
+        {
             initNewGame(currentN);
         }
 
-        // 2. ÖØÐÂ¿ªÊ¼±¾¾Ö (»Ö¸´µ½±¾¾Ö¸Õ¿ªÊ¼µÄÑù×Ó£¬²½ÊýÇåÁã)
-        if (my >= 140 && my <= 140 + BTN_HEIGHT) {
-            currentBoard = initialBoard; // »Ö¸´³õÊ¼×´Ì¬
-            humanSteps = 0;              // ²½ÊýÇåÁã
-            state = PLAYING;             // ×´Ì¬ÉèÎªÕýÔÚÓÎÍæ
+        //é‡æ–°å¼€å§‹æœ¬å±€
+        if (my >= 140 && my <= 140 + BTN_HEIGHT) 
+        {
+            currentBoard = initialBoard;
+            humanSteps = 0;
+            state = PLAYING;
         }
 
-        // ÒÔÏÂ°´Å¥Ö»ÓÐÔÚ PLAYING Ê±¿ÉÓÃ
         if (state == PLAYING) {
-            // 3. ¼ì²éÊÇ·ñÓÐ½â
-            if (my >= 200 && my <= 200 + BTN_HEIGHT) {
+            //æ£€æŸ¥æ˜¯å¦æœ‰è§£
+            if (my >= 200 && my <= 200 + BTN_HEIGHT) 
+            {
                 checkSolvable();
             }
-            // 4. ²é¿´×îÉÙ²½Êý½â
-            if (my >= 260 && my <= 260 + BTN_HEIGHT) {
+            // æŸ¥çœ‹æœ€å°‘æ­¥æ•°è§£
+            if (my >= 260 && my <= 260 + BTN_HEIGHT) 
+            {
                 showSolution();
             }
         }
@@ -139,7 +149,7 @@ void tryHumanMove(int row, int col) {
     int zeroRow = currentBoard.blankRow();
     int zeroCol = currentBoard.blankCol();
 
-    // Âü¹þ¶Ù¾àÀëÎª1£¬ËµÃ÷ÏàÁÚ£¬Ö±½ÓÒÆ¶¯£¬ÊÖ¸Ð¼«¼Ñ
+    // æ›¼å“ˆé¡¿è·ç¦»è‹¥ä¸º1ï¼Œç›¸é‚»
     if (abs(row - zeroRow) + abs(col - zeroCol) == 1) {
         MoveDirection dir = MOVE_NONE;
         if (row == zeroRow - 1) dir = MOVE_DOWN;
@@ -155,27 +165,27 @@ void tryHumanMove(int row, int col) {
 
 void checkSolvable() {
     if (currentBoard.isSolvable()) {
-        MessageBox(GetHWnd(), _T("·ÅÐÄÍæ£¬Õâ¸öÆåÅÌÊÇÓÐ½âµÄ£¡"), _T("¼ì²â½á¹û"), MB_OK);
+        MessageBox(GetHWnd(), _T("æ”¾å¿ƒçŽ©ï¼Œè¿™ä¸ªæ£‹ç›˜æœ‰è§£(`ãƒ»Ï‰ãƒ»Â´)"), _T("æ£€æµ‹ç»“æžœ"), MB_OK);
     }
     else {
-        MessageBox(GetHWnd(), _T("ÊýÑ§ÉÏÖ¤Ã÷´Ë¾ÖÎÞ½â£¬±ðÕÛÄ¥×Ô¼ºÁË£¬Çëµã»÷¡¾ÐÂµÄÒ»¾Ö¡¿£¡"), _T("¼ì²â½á¹û"), MB_OK | MB_ICONWARNING);
+        MessageBox(GetHWnd(), _T("æ­¤å±€æ— è§£ï¼Œç‚¹å‡»ã€æ–°çš„ä¸€å±€ã€‘é‡æ–°å¼€å§‹å­ã…_ã…"), _T("æ£€æµ‹ç»“æžœ"), MB_OK);
     }
 }
 
 void showSolution() {
     if (!currentBoard.isSolvable()) {
-        MessageBox(GetHWnd(), _T("µ±Ç°ÆåÅÌÎÞ½â£¬ÎÞ·¨ÑÝÊ¾£¡"), _T("ÌáÊ¾"), MB_OK);
+        MessageBox(GetHWnd(), _T("æ­¤å±€æ— è§£ï¼Œç‚¹å‡»ã€æ–°çš„ä¸€å±€ã€‘é‡æ–°å¼€å§‹å­ã…_ã…"), _T("æç¤º"), MB_OK);
         return;
     }
 
-    outtextxy(BTN_X, 330, _T("ÕýÔÚ¼ÆËã×îÉÙ²½Êý..."));
+    outtextxy(BTN_X, 330, _T("æ­£åœ¨è®¡ç®—æœ€å°‘æ­¥æ•°..."));
     FlushBatchDraw();
 
     SolveResult res = solver.solve(currentBoard);
     if (res.solved) {
         TCHAR msg[128];
-        _stprintf_s(msg, _T("¼ÆËãÍê±Ï£¡×îÉÙ»¹ÐèÒª %d ²½¡£\nµã»÷È·ÈÏ¿ªÊ¼ÑÝÊ¾¡£"), res.steps);
-        MessageBox(GetHWnd(), msg, _T("AI ×¼±¸¾ÍÐ÷"), MB_OK);
+        _stprintf_s(msg, _T("æœ€å°‘è¿˜éœ€è¦ %d æ­¥\nç‚¹å‡»ç¡®è®¤å¼€å§‹æ¼”ç¤º"), res.steps);
+        MessageBox(GetHWnd(), msg, _T("æç¤º"), MB_OK);
 
         state = DEMOING;
         for (int i = 0; i < res.moves.size(); ++i) {
@@ -185,7 +195,7 @@ void showSolution() {
             Sleep(250);
         }
         state = GAME_OVER;
-        MessageBox(GetHWnd(), _T("ÑÝÊ¾½áÊø£¬Çëµã»÷¡¾ÐÂµÄÒ»¾Ö¡¿"), _T("ÌáÊ¾"), MB_OK);
+        MessageBox(GetHWnd(), _T("æ¼”ç¤ºç»“æŸ"), _T("æç¤º"), MB_OK);
     }
 }
 
@@ -193,8 +203,8 @@ void drawUI() {
     cleardevice();
     setbkmode(TRANSPARENT);
 
-    // 1. ¶¥²¿±êÇ©
-    settextstyle(20, 0, _T("Î¢ÈíÑÅºÚ"));
+    // 1. é¡¶éƒ¨æ ‡ç­¾
+    settextstyle(20, 0, _T("å¾®è½¯é›…é»‘"));
     setfillcolor(currentN == 3 ? RGB(100, 150, 200) : RGB(200, 200, 200));
     fillroundrect(50, 20, 130, 55, 10, 10);
     settextcolor(RGB(20, 20, 20));
@@ -204,12 +214,12 @@ void drawUI() {
     fillroundrect(150, 20, 230, 55, 10, 10);
     outtextxy(165, 28, _T("4 x 4"));
 
-    TCHAR stepStr[64];
-    _stprintf_s(stepStr, _T("µ±Ç°²½Êý: %d"), humanSteps);
+/*    TCHAR stepStr[64];//æ­¥æ•°
+    _stprintf_s(stepStr, _T("å½“å‰æ­¥æ•°: %d"), humanSteps);
     settextcolor(RGB(50, 50, 50));
-    outtextxy(260, 28, stepStr);
+    outtextxy(260, 28, stepStr);*/
 
-    // 2. »æÖÆÆåÅÌ
+    // 2. ç»˜åˆ¶æ£‹ç›˜
     setlinecolor(RGB(150, 150, 150));
     setfillcolor(RGB(180, 180, 180));
     fillroundrect(START_X - 5, START_Y - 5, START_X + currentN * TILE_SIZE + 5, START_Y + currentN * TILE_SIZE + 5, 8, 8);
@@ -222,9 +232,14 @@ void drawUI() {
 
             if (val != 0) {
                 int correctVal = i * currentN + j + 1;
-                if (val == correctVal) setfillcolor(RGB(120, 180, 120));
-                else setfillcolor(RGB(220, 220, 220));
-
+                if (val == correctVal)
+                {
+                    setfillcolor(RGB(120, 180, 120));
+                }else
+                {
+                    setfillcolor(RGB(220, 220, 220));
+                }
+                    
                 fillroundrect(x + 2, y + 2, x + TILE_SIZE - 2, y + TILE_SIZE - 2, 8, 8);
 
                 settextstyle(36, 0, _T("Arial"));
@@ -238,36 +253,48 @@ void drawUI() {
         }
     }
 
-    // 3. »æÖÆÓÒ²àËÄ¿Å°´Å¥
-    settextstyle(18, 0, _T("Î¢ÈíÑÅºÚ"));
+    // 3. ç»˜åˆ¶å³ä¾§æŒ‰é’®
+    settextstyle(18, 0, _T("å¾®è½¯é›…é»‘"));
     setlinecolor(BLACK);
 
-    // ¡¾ÐÂ°´Å¥1¡¿ÐÂµÄÒ»¾Ö (À¶É«)
+    //æ–°çš„ä¸€å±€
     setfillcolor(RGB(100, 180, 255));
     fillroundrect(BTN_X, 80, BTN_X + BTN_WIDTH, 80 + BTN_HEIGHT, 5, 5);
-    outtextxy(BTN_X + 35, 93, _T("ÐÂµÄÒ»¾Ö"));
+    outtextxy(BTN_X + 35, 93, _T("æ–°çš„ä¸€å±€"));
 
-    // ¡¾ÐÂ°´Å¥2¡¿ÖØÐÂ¿ªÊ¼±¾¾Ö (Ç³À¶É«)
+    //é‡æ–°å¼€å§‹æœ¬å±€
     setfillcolor(RGB(150, 200, 255));
     fillroundrect(BTN_X, 140, BTN_X + BTN_WIDTH, 140 + BTN_HEIGHT, 5, 5);
-    outtextxy(BTN_X + 20, 153, _T("ÖØÐÂ¿ªÊ¼±¾¾Ö"));
+    outtextxy(BTN_X + 20, 153, _T("é‡æ–°å¼€å§‹æœ¬å±€"));
 
-    // ¼ì²éÊÇ·ñÓÐ½â
-    if (state == PLAYING) setfillcolor(RGB(200, 200, 200));
-    else setfillcolor(RGB(100, 100, 100));
+    // æ£€æŸ¥æ˜¯å¦æœ‰è§£
+    if (state == PLAYING)
+    {
+        setfillcolor(RGB(200, 200, 200));
+    }
+    else
+    {
+        setfillcolor(RGB(100, 100, 100));
+    }
     fillroundrect(BTN_X, 200, BTN_X + BTN_WIDTH, 200 + BTN_HEIGHT, 5, 5);
-    outtextxy(BTN_X + 20, 213, _T("¼ì²éÊÇ·ñÓÐ½â"));
+    outtextxy(BTN_X + 20, 213, _T("æ£€æŸ¥æ˜¯å¦æœ‰è§£"));
 
-    // ²é¿´×îÉÙ²½Êý½â
-    if (state == PLAYING) setfillcolor(RGB(200, 200, 200));
-    else setfillcolor(RGB(100, 100, 100));
+    // æŸ¥çœ‹æœ€å°‘æ­¥æ•°è§£
+    if (state == PLAYING)
+    {
+        setfillcolor(RGB(200, 200, 200));
+    }
+    else
+    {
+        setfillcolor(RGB(100, 100, 100));
+    }
     fillroundrect(BTN_X, 260, BTN_X + BTN_WIDTH, 260 + BTN_HEIGHT, 5, 5);
-    outtextxy(BTN_X + 10, 273, _T("²é¿´×îÉÙ²½Êý½â"));
+    outtextxy(BTN_X + 10, 273, _T("æŸ¥çœ‹æœ€å°‘æ­¥æ•°è§£"));
 
-    // ×´Ì¬ÌáÊ¾ÎÄ×Ö
-    if (state == GAME_OVER) {
+    // çŠ¶æ€æç¤ºæ–‡å­—
+    if (state == GAME_OVER) 
+    {
         settextcolor(RGB(200, 50, 50));
-        outtextxy(BTN_X, 330, _T("ÓÎÏ·½áÊø"));
-        outtextxy(BTN_X, 360, _T("Çëµã»÷¡¾ÐÂµÄÒ»¾Ö¡¿"));
+        outtextxy(BTN_X, 330, _T("æ¸¸æˆç»“æŸ"));
     }
 }
